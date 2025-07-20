@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI Online Test</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #4e54c8;
+    }
+    .question {
+      margin: 20px 0;
+    }
+    .question p {
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #4e54c8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      margin: 20px auto;
+    }
+    button:hover {
+      background: #565dff;
+    }
+    #result-section {
+      display: none;
+      text-align: center;
+    }
+    #result-section h2 {
+      color: #2d3436;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MBTI Online Test</h1>
+    <form id="mbtiForm"></form>
+    <div id="result-section">
+      <h2>Hasil MBTI Anda:</h2>
+      <p id="mbtiResult"></p>
+      <button onclick="window.print()">Cetak Hasil</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { text: "Saya merasa berenergi saat berada di sekitar banyak orang.", type: "E", alt: "I" },
+      { text: "Saya lebih suka merencanakan segalanya daripada spontan.", type: "J", alt: "P" },
+      { text: "Saya membuat keputusan berdasarkan logika, bukan perasaan.", type: "T", alt: "F" },
+      { text: "Saya lebih percaya pada fakta daripada intuisi.", type: "S", alt: "N" }
+    ];
+
+    const mbtiForm = document.getElementById("mbtiForm");
+
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.classList.add("question");
+      div.innerHTML = `
+        <p>${i + 1}. ${q.text}</p>
+        <label><input type="radio" name="q${i}" value="${q.type}" required> Setuju</label>
+        <label><input type="radio" name="q${i}" value="${q.alt}"> Tidak Setuju</label>
+      `;
+      mbtiForm.appendChild(div);
+    });
+
+    const submitBtn = document.createElement("button");
+    submitBtn.type = "submit";
+    submitBtn.textContent = "Lihat Hasil";
+    mbtiForm.appendChild(submitBtn);
+
+    mbtiForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(mbtiForm);
+      const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+      for (let [_, value] of formData.entries()) {
+        scores[value]++;
+      }
+
+      const result =
+        (scores.E >= scores.I ? "E" : "I") +
+        (scores.S >= scores.N ? "S" : "N") +
+        (scores.T >= scores.F ? "T" : "F") +
+        (scores.J >= scores.P ? "J" : "P");
+
+      const descriptions = {
+        INTJ: "INTJ - The Mastermind: Visioner dan strategis, percaya pada logika dan rencana jangka panjang.",
+        INTP: "INTP - The Thinker: Analitis, mandiri, dan tertarik pada ide-ide abstrak."
+      };
+
+      document.getElementById("mbtiResult").innerHTML = `${result}<br>${descriptions[result] || 'Deskripsi belum tersedia'}`;
+      document.getElementById("result-section").style.display = "block";
+      mbtiForm.style.display = "none";
+    });
+  </script>
+</body>
+</html>
